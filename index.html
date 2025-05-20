@@ -1,72 +1,240 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event Script Writer</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    h1, h2 { margin-top: 1.5rem; }
-    .input-group { margin-bottom: 1rem; }
-    label { display: block; margin-bottom: 0.25rem; }
-    input[type="text"], input[type="number"], select { width: 100%; padding: 0.5rem; font-size: 1rem; margin-bottom: 0.5rem; }
-    button { margin: 0.5rem 0.25rem 0.5rem 0; padding: 0.5rem 1rem; font-size: 1rem; }
-    #charButtons, #actionButtons, #moveControls { margin-top: 1rem; }
-    #charButtons button.selected, #moveControls button.selected { outline: 2px solid #007acc; }
-#output {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  /* old: min-height: 2rem; */
-  min-height: 200px;       /* make it taller by default */
-  max-height: 400px;       /* optional: cap its height */
-  overflow-x: auto;
-  overflow-y: auto;        /* allow vertical scrolling if it overflows */
-  white-space: nowrap;     /* keep your inline layout */
-}
+    body {
+      font-family: Consolas, "Courier New", monospace;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      background-color: #fffbe6;
+      color: #8d421a;
+    }
+
+    h1,
+    h2 {
+      margin-top: 1.5rem;
+    }
+
+    .input-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    button,
+    input[type="text"],
+    input[type="number"],
+    select {
+      font-family: Consolas, "Courier New", monospace;
+      ;
+      margin: 0.5rem 0.25rem 0.5rem 0;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background: #f0cf99;
+      border: 1px solid #673d0e;
+    }
+
+    #charButtons,
+    #actionButtons,
+    #moveControls,
+    #faceControls #emoteControls {
+      margin-top: 1rem;
+    }
+
+    #charButtons button.selected,
+    #moveControls button.selected,
+    #faceControls button.selected #emoteControls button.selected {
+      outline: 2px solid #805411;
+    }
+
+    #output {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f0cf99;
+      border: 1px solid #673d0e;
+      min-height: 200px;
+      max-height: 400px;
+      overflow-x: auto;
+      overflow-y: auto;
+      white-space: nowrap;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    a {
+      color: #b46d46;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #8d421a;
+    }
   </style>
 </head>
+
 <body>
   <h1>Event Script Writer</h1>
+  <p>
+    This is a tool to create simple events in Stardew Valley made by <a
+      href="https://next.nexusmods.com/profile/LittlePippi/mods" target="_blank">LittlePippi</a>.
+    <br>
+    <br>
+    I recommend downloading <a href="https://www.nexusmods.com/stardewvalley/mods/679" target="_blank">Debug Mode</a> to
+    find tile x,y coordinations.
+    <br>
+    <br>
+    This is not a foolproof event maker, just a helpful tool for structure and basic actions.
 
-  <!-- Event Setup -->
-  <h2>Event Setup</h2>
-  <div class="input-group">
-    <label for="location">Location:</label>
-    <select id="location">
-      <option>Town</option><option>Forest</option><option>Mountain</option><option>Hospital</option>
-    </select>
-    <label for="eventNumber">Event Number (≥6 digits):</label>
-    <input type="number" id="eventNumber" placeholder="e.g. 656666">
-    <label for="music">Music:</label>
-    <select id="music">
-      <option>none</option><option>default</option><option>CloudCountry</option>
-      <option>distantBanjo</option><option>echos</option><option>event1</option><option>event2</option>
-    </select>
+  </p>
+
+
+  <!-- Event + Conditions Setup -->
+  <div id="eventSetup">
+    <h2>Event Setup</h2>
+    <div class="input-group">
+      <label for="location">Location:</label>
+      <select id="location">
+        <option value="Mountain">Mountain</option>
+        <option value="ScienceHouse">Carpenter</option>
+        <option value="Mine">Mine</option>
+        <option value="AdventureGuild">Adventurer's Guild</option>
+        <option value="Railroad">Railroad</option>
+        <option value="BusStop">Bus Stop</option>
+        <option value="Town">Town</option>
+        <option value="CommunityCenter">CommunityCenter</option>
+        <option value="Hospital">Hospital</option>
+        <option value="SeedShop">Pierre's Shop</option>
+        <option value="Saloon">Saloon</option>
+        <option value="ArchaeologyHouse">Museum</option>
+        <option value="Blacksmith">Blacksmith</option>
+        <option value="JojaMart">JojaMart</option>
+        <option value="Forest">Cindersap Forest</option>
+        <option value="AnimalShop">Marnie's Ranch</option>
+        <option value="WizardHouse">Wizard Tower</option>
+        <option value="WizardHouseBasement">Wizard Tower's Basement</option>
+        <option value="Beach">Beach</option>
+        <option value="FishShop">Willy's Shop</option>
+        <option value="BoatTunnel">Willy's Boatroom</option>
+        <option value="Sewer">Sewer</option>
+        <option value="BugLand">Mutant Bug Lair</option>
+        <option value="Tent">Linus' Tent</option>
+        <option value="JoshHouse">Alex's House</option>
+        <option value="HaleyHouse">Haley and Emily's House</option>
+        <option value="SamHouse">Sam's House</option>
+        <option value="ManorHouse">Lewis' House</option>
+        <option value="Trailer">Penny's Trailer</option>
+        <option value="Trailer_Big">Upgraded Trailer</option>
+        <option value="HarveyRoom">Harvey's Room</option>
+        <option value="ElliottHouse">Elliott's Cabin</option>
+        <option value="SebastianRoom">Sebastian's Room</option>
+        <option value="LeahHouse">Leah's House</option>
+        <option value="Desert">Desert</option>
+        <option value="SandyHouse">Sandy's Shop</option>
+        <option value="SandyHouse">Sandy's Shop</option>
+        <option value="Woods">Secret Woods. Careful with this one!</option>
+        <option value="WitchSwamp">WitchSwamp</option>
+        <option value="WitchHut">WitchHut</option>
+        <option value="Summit">Summit</option>
+        <option value="BathHouse_Entry">Bathhouse Entry</option>
+        <option value="BathHouse_Pool">Bathhouse Pool</option>
+        <option value="Greenhouse">Greenhouse</option>
+        <option value="SkullCave">SkullCave</option>
+        <option value="Backwoods">Backwoods</option>
+        <option value="Tunnel">Tunnel</option>
+        <option value="IslandSouth">IslandSouth</option>
+        <option value="IslandSouthEast">IslandSouthEast</option>
+        <option value="IslandSouthEastCave">IslandSouthEastCave</option>
+        <option value="IslandEast">IslandEast</option>
+        <option value="IslandWest">IslandWest</option>
+        <option value="IslandNorth">IslandNorth</option>
+        <option value="IslandHut">IslandHut</option>
+        <option value="IslandFarmHouse">IslandFarmHouse</option>
+        <option value="LeoTreeHouse">LeoTreeHouse</option>
+        <option value="Placeholder">Placeholder</option>
+      </select>
+
+      <label for="eventNumber">Event Number (At least 6 digits):</label>
+      <input type="number" id="eventNumber" placeholder="ex. 656666">
+
+      <label for="music">Music:</label>
+      <select id="music">
+        <option>none</option>
+        <option>default</option>
+        <option>CloudCountry</option>
+        <option>distantBanjo</option>
+        <option>echos</option>
+        <option>event1</option>
+        <option>event2</option>
+      </select>
+
+      <label for="weatherCondition">Weather Condition (optional):</label>
+      <select id="weatherCondition">
+        <option value="">None</option>
+        <option value="sunny">sunny</option>
+        <option value="rain">rain</option>
+      </select>
+
+      <label for="seasonCondition">Season Condition (optional):</label>
+      <select id="seasonCondition">
+        <option value="">None</option>
+        <option value="spring">spring</option>
+        <option value="summer">summer</option>
+        <option value="fall">fall</option>
+        <option value="winter">winter</option>
+      </select>
+
+      <label>Friendship Condition (optional):</label>
+      <input type="text" id="friendName" placeholder="NPC Name (ex Levi)">
+      <input type="number" id="friendHearts" placeholder="Hearts (ex 2)" min="0">
+    </div>
+    <button onclick="saveEvent()">Save Event &amp; Conditions</button>
   </div>
-  <button onclick="saveEvent()">Save Event</button>
+
 
   <!-- Dynamic Character Setup -->
-  <h2>Character Setup</h2>
-  <div class="input-group">
-    <label for="charCount">Number of Characters:</label>
-    <input type="number" id="charCount" min="1" max="10" value="3" onchange="renderCharacterInputs()">
+  <div id="characterSetup" style="display: none;">
+    <h2>Character Setup</h2>
+    <div class="input-group">
+      <label for="charCount">Number of Characters:</label>
+      <input type="number" id="charCount" min="1" max="10" value="1" onchange="renderCharacterInputs()">
+    </div>
+    <div id="characterInputs"></div>
+    <button onclick="saveNames()">Add to Event</button>
   </div>
-  <div id="characterInputs"></div>
-  <button onclick="saveNames()">Save Character Names</button>
 
   <!-- Character Actions -->
-  <h2>Character Actions</h2>
-  <div id="charButtons"></div>
+  <div id="interactionSetup" style="display: none;">
+    <h2>Select Character</h2>
+    <div id="charButtons"></div>
 
-  <!-- Actions / Move Controls -->
-  <h2>Actions</h2>
-  <div id="actionButtons">
-    <button onclick="showMoveControls()">Move</button>
-    <button onclick="eventSpeak()">Speak</button>
-    <button onclick="clearOutput()">Clear Output</button>
+    <!-- Actions / Move Controls -->
+    <h2>Actions</h2>
+    <div id="actionButtons">
+      <button onclick="showMoveControls()">Move</button>
+      <button onclick="eventSpeak()">Speak</button>
+      <button onclick="showFaceControls()">FaceDirection</button>
+      <button onclick="showEmoteControls()">Emote</button>
+      <button onclick="clearOutput()">Clear Output</button>
+    </div>
   </div>
+
   <div id="moveControls" style="display:none;">
     <label>Tiles to move:</label>
     <input type="number" id="moveCount" value="1" min="1" style="width:4rem;">
@@ -88,16 +256,129 @@
     <button onclick="addMove()">Add Move</button>
   </div>
 
+  <!-- Face Direction Controls -->
+  <div id="faceControls" style="display:none;">
+    <label>Select facing direction:</label>
+    <select id="faceDir">
+      <option value="0">Up (0)</option>
+      <option value="1">Right (1)</option>
+      <option value="2">Down (2)</option>
+      <option value="3">Left (3)</option>
+    </select>
+    <button onclick="addFaceDirection()">Change Face Direction</button>
+  </div>
+
+  <!-- Emote Controls -->
+  <div id="emoteControls" style="display:none;">
+    <label>Select Emote:</label>
+    <select id="emoteType">
+      <option value="20">Heart</option>
+      <option value="32">Happy</option>
+      <option value="8">Questionmark</option>
+      <option value="16">Exclamation</option>
+      <option value="12">Angry</option>
+      <option value="28">Sad</option>
+      <option value="24">Sleep</option>
+      <option value="40">...</option>
+
+    </select>
+    <button onclick="addEmote()">Add Emote</button>
+  </div>
+
+
+  <!-- Output -->
   <div id="output"></div>
 
   <script>
     let eventSetup = null;
     let charData = [];
-    let selectedChar = null;
-    let selectedDir = null;
+    let selectedChar;
+    let selectedDir;
 
-    // Kick things off
+    // Initial load
     renderCharacterInputs();
+
+    function saveEvent() {
+      const loc = document.getElementById('location').value;
+      const evNum = document.getElementById('eventNumber').value.trim();
+      const music = document.getElementById('music').value;
+      const weather = document.getElementById('weatherCondition').value;
+      const season = document.getElementById('seasonCondition').value;
+      const friendName = document.getElementById('friendName').value.trim();
+      const heartsInput = parseInt(document.getElementById('friendHearts').value, 10) || 0;
+
+      if (!evNum || evNum.length < 6) {
+        alert('Please enter an event number at least 6 digits long.');
+        return;
+      }
+
+      // Store for later
+      eventSetup = { loc, evNum, music };
+
+      // Begin JSON header
+      writeText(`"Action": "EditData",`);
+      writeText(`"Target": "Data/Events/${loc}",`);
+      writeText(`"Entries": {`);
+
+      // Base entry
+      writeText(`"${evNum}`);
+
+      // Optional friendship
+      if (friendName && heartsInput > 0) {
+        const amount = heartsInput * 250;
+        writeText(`/f ${friendName} ${amount}`);
+      }
+
+      // Optional weather
+      if (season) {
+        writeText(`/${season}`);
+      }
+
+      // Optional weather
+      if (weather) {
+        writeText(`/w ${weather}`);
+      }
+
+      // Base entry
+      writeText(`": "${music}/-1000 -1000/skippable/`);
+
+      // Hide Event set-up and show Character set-up
+      document.getElementById('eventSetup').style.display = 'none';
+      document.getElementById('characterSetup').style.display = 'block';
+
+
+
+
+    }
+
+    function saveNames() {
+      if (!eventSetup) { alert('Save event first'); return; }
+      const count = charData.length - 1;
+      const segments = [];
+      for (let i = 1; i <= count; i++) {
+        const name = document.getElementById('char' + i).value.trim() || null;
+        const y = parseInt(document.getElementById('startY' + i).value, 10) || 0;
+        const x = parseInt(document.getElementById('startX' + i).value, 10) || 0;
+        const f = parseInt(document.getElementById('facing' + i).value, 10);
+        if (name) {
+          charData[i] = { name, y, x, facing: f };
+          segments.push(`${name} ${y} ${x} ${f}`);
+        } else {
+          charData[i] = null;
+        }
+      }
+      if (segments.length > 0) writeText(segments.join(' ') + '/');
+      renderCharButtons();
+
+      // Show character selection & action buttons
+      document.getElementById('interactionSetup').style.display = 'block';
+
+      // Hide character setup
+      document.getElementById('characterSetup').style.display = 'none';
+
+    }
+
+
 
     function renderCharacterInputs() {
       const count = parseInt(document.getElementById('charCount').value, 10);
@@ -106,11 +387,11 @@
       const container = document.getElementById('characterInputs');
       container.innerHTML = '';
       for (let i = 1; i <= count; i++) {
-        const div = document.createElement('div');
-        div.className = 'input-group';
-        div.innerHTML = `
+        const d = document.createElement('div');
+        d.className = 'input-group';
+        d.innerHTML = `
           <label>Character ${i} Name:</label>
-          <input type="text" id="char${i}" placeholder="Enter name for character ${i}">
+          <input type="text" id="char${i}" placeholder="Name ${i}">
           <label>Start Y, X:</label>
           <input type="number" id="startY${i}" placeholder="Y">
           <input type="number" id="startX${i}" placeholder="X">
@@ -120,61 +401,27 @@
             <option value="1">Right (1)</option>
             <option value="2">Down (2)</option>
             <option value="3">Left (3)</option>
-          </select>
-        `;
-        container.appendChild(div);
+          </select>`;
+        container.appendChild(d);
       }
     }
 
-    function saveEvent() {
-      const loc = document.getElementById('location').value;
-      const evNum = document.getElementById('eventNumber').value.trim();
-      const music = document.getElementById('music').value;
-      if (!evNum || evNum.length < 6) {
-        alert('Please enter an event number at least 6 digits long.');
-        return;
-      }
-      eventSetup = { loc, evNum, music };
-      writeText(`"Action": "EditData",`);
-      writeText(`"Target": "Data/Events/${loc}",`);
-      writeText(`"Entries": {`);
-      writeText(`"${evNum}/": "${music}/-1000 -1000/skippable/`);
-    }
 
-    function saveNames() {
-          if (!eventSetup)        { alert('Save event first');         return; }
-      const count = charData.length - 1;
-      const segments = [];
-      for (let i = 1; i <= count; i++) {
-        const name = document.getElementById('char' + i).value.trim() || null;
-        const y    = parseInt(document.getElementById('startY' + i).value, 10) || 0;
-        const x    = parseInt(document.getElementById('startX' + i).value, 10) || 0;
-        const f    = parseInt(document.getElementById('facing' + i).value, 10);
-        if (name) {
-          charData[i] = { name, y, x, facing: f };
-          segments.push(`${name} ${y} ${x} ${f}`);
-        } else {
-          charData[i] = null;
-        }
-      }
-      if (segments.length > 0) writeText(segments.join(' ')+ '/');
-      renderCharButtons();
-    }
+
 
     function renderCharButtons() {
-      const container = document.getElementById('charButtons');
-      container.innerHTML = '';
+      const c = document.getElementById('charButtons');
+      c.innerHTML = '';
       for (let i = 1; i < charData.length; i++) {
         const btn = document.createElement('button');
         btn.innerText = charData[i]?.name || `Unnamed${i}`;
         btn.onclick = () => {
           selectedChar = i;
-          document
-            .querySelectorAll('#charButtons button')
+          document.querySelectorAll('#charButtons button')
             .forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
         };
-        container.appendChild(btn);
+        c.appendChild(btn);
       }
     }
 
@@ -182,27 +429,25 @@
       if (!selectedChar) { alert('Select a character first'); return; }
       document.getElementById('moveControls').style.display = 'block';
       selectedDir = null;
-      document
-        .querySelectorAll('#moveControls button')
+      document.querySelectorAll('#moveControls button')
         .forEach(b => b.classList.remove('selected'));
     }
 
     function selectMoveDir(dir, btn) {
       selectedDir = dir;
-      document
-        .querySelectorAll('#moveControls button')
+      document.querySelectorAll('#moveControls button')
         .forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
     }
 
     function addMove() {
       if (!eventSetup) { alert('Save event first'); return; }
-      if (!selectedDir)  { alert('Select move direction'); return; }
+      if (!selectedDir) { alert('Select move direction'); return; }
       const cnt = parseInt(document.getElementById('moveCount').value, 10) || 1;
       let dx = 0, dy = 0;
-      if (selectedDir === 'up')    dy = -cnt;
-      if (selectedDir === 'down')  dy = cnt;
-      if (selectedDir === 'left')  dx = -cnt;
+      if (selectedDir === 'up') dy = -cnt;
+      if (selectedDir === 'down') dy = cnt;
+      if (selectedDir === 'left') dx = -cnt;
       if (selectedDir === 'right') dx = cnt;
       const endF = document.getElementById('endFacing').value;
       const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
@@ -210,23 +455,55 @@
       document.getElementById('moveControls').style.display = 'none';
     }
 
+    function showFaceControls() {
+      if (!selectedChar) { alert('Select a character first'); return; }
+      document.getElementById('moveControls').style.display = 'none';
+      document.getElementById('faceControls').style.display = 'block';
+    }
+
+    function addFaceDirection() {
+      if (!selectedChar) { alert('Select a character first'); return; }
+      const dir = document.getElementById('faceDir').value;
+      const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
+      writeText(`faceDirection ${name} ${dir}/`);
+      document.getElementById('faceControls').style.display = 'none';
+    }
+
+
     function eventSpeak() {
-      if (!eventSetup)        { alert('Save event first');         return; }
-      if (!selectedChar)      { alert('Select a character first'); return; }
+      if (!eventSetup) { alert('Save event first'); return; }
+      if (!selectedChar) { alert('Select a character first'); return; }
       const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
       const line = prompt(`Enter dialogue for ${name}:`, '...');
       if (line !== null) writeText(`speak ${name} \\\" ${line} \\\"/`);
     }
+
+    function showEmoteControls() {
+      if (!selectedChar) { alert('Select a character first'); return; }
+      document.getElementById('moveControls').style.display = 'none';
+      document.getElementById('faceControls').style.display = 'none';
+      document.getElementById('emoteControls').style.display = 'block';
+    }
+
+    function addEmote() {
+      if (!selectedChar) { alert('Select a character first'); return; }
+      const emote = document.getElementById('emoteType').value;
+      const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
+      writeText(`emote ${name} ${emote}/`);
+      document.getElementById('emoteControls').style.display = 'none';
+    }
+
 
     function clearOutput() {
       document.getElementById('output').innerHTML = '';
     }
 
     function writeText(text) {
-      const span = document.createElement('span');
-      span.innerText = text + ' ';
-      document.getElementById('output').appendChild(span);
+      const s = document.createElement('span');
+      s.innerText = text + '';
+      document.getElementById('output').appendChild(s);
     }
   </script>
 </body>
+
 </html>
