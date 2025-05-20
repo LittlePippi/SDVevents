@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button Text Writer</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    button { margin: 0.5rem; padding: 0.5rem 1rem; font-size: 1rem; }
+    #output { margin-top: 1rem; font-size: 1.2rem; color: #333; }
+  </style>
+</head>
+<body>
+  <h1>Click a Button to Write Text</h1>
+  <button onclick="writeText('Hello, World!')">Say Hello</button>
+  <button onclick="writeText('Goodbye!')">Say Goodbye</button>
+  <button onclick="writeText('Custom Text Button Clicked')">Custom Action</button>
+  <div id="output"></div>
+  <script>
+    function writeText(text) {
+      document.getElementById('output').innerText = text;
+    }
+  </script>
+</body>
+</html>
