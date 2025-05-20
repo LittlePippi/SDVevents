@@ -1,26 +1,231 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Button Text Writer</title>
+  <title>Event Script Writer</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; }
-    button { margin: 0.5rem; padding: 0.5rem 1rem; font-size: 1rem; }
-    #output { margin-top: 1rem; font-size: 1.2rem; color: #333; }
+    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
+    h1, h2 { margin-top: 1.5rem; }
+    .input-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.25rem; }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 0.5rem; font-size: 1rem; margin-bottom: 0.5rem; }
+    button { margin: 0.5rem 0.25rem 0.5rem 0; padding: 0.5rem 1rem; font-size: 1rem; }
+    #charButtons, #actionButtons, #moveControls { margin-top: 1rem; }
+    #charButtons button.selected, #moveControls button.selected { outline: 2px solid #007acc; }
+#output {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  /* old: min-height: 2rem; */
+  min-height: 200px;       /* make it taller by default */
+  max-height: 400px;       /* optional: cap its height */
+  overflow-x: auto;
+  overflow-y: auto;        /* allow vertical scrolling if it overflows */
+  white-space: nowrap;     /* keep your inline layout */
+}
   </style>
 </head>
 <body>
-  <h1>Click a Button to Write Text</h1>
-  <button onclick="writeText('Hello, World!')">Say Hello</button>
-  <button onclick="writeText('Goodbye!')">Say Goodbye</button>
-  <button onclick="writeText('Custom Text Button Clicked')">Custom Action</button>
-  <button onclick="writeText('Your new text')">Your Button Label</button>
+  <h1>Event Script Writer</h1>
+
+  <!-- Event Setup -->
+  <h2>Event Setup</h2>
+  <div class="input-group">
+    <label for="location">Location:</label>
+    <select id="location">
+      <option>Town</option><option>Forest</option><option>Mountain</option><option>Hospital</option>
+    </select>
+    <label for="eventNumber">Event Number (≥6 digits):</label>
+    <input type="number" id="eventNumber" placeholder="e.g. 656666">
+    <label for="music">Music:</label>
+    <select id="music">
+      <option>none</option><option>default</option><option>CloudCountry</option>
+      <option>distantBanjo</option><option>echos</option><option>event1</option><option>event2</option>
+    </select>
+  </div>
+  <button onclick="saveEvent()">Save Event</button>
+
+  <!-- Dynamic Character Setup -->
+  <h2>Character Setup</h2>
+  <div class="input-group">
+    <label for="charCount">Number of Characters:</label>
+    <input type="number" id="charCount" min="1" max="10" value="3" onchange="renderCharacterInputs()">
+  </div>
+  <div id="characterInputs"></div>
+  <button onclick="saveNames()">Save Character Names</button>
+
+  <!-- Character Actions -->
+  <h2>Character Actions</h2>
+  <div id="charButtons"></div>
+
+  <!-- Actions / Move Controls -->
+  <h2>Actions</h2>
+  <div id="actionButtons">
+    <button onclick="showMoveControls()">Move</button>
+    <button onclick="eventSpeak()">Speak</button>
+    <button onclick="clearOutput()">Clear Output</button>
+  </div>
+  <div id="moveControls" style="display:none;">
+    <label>Tiles to move:</label>
+    <input type="number" id="moveCount" value="1" min="1" style="width:4rem;">
+    <div>
+      <button onclick="selectMoveDir('up', this)">Up</button>
+      <button onclick="selectMoveDir('left', this)">Left</button>
+      <button onclick="selectMoveDir('down', this)">Down</button>
+      <button onclick="selectMoveDir('right', this)">Right</button>
+    </div>
+    <div>
+      <label>Direction to face at end:</label>
+      <select id="endFacing">
+        <option value="0">Up (0)</option>
+        <option value="1">Right (1)</option>
+        <option value="2">Down (2)</option>
+        <option value="3">Left (3)</option>
+      </select>
+    </div>
+    <button onclick="addMove()">Add Move</button>
+  </div>
 
   <div id="output"></div>
+
   <script>
+    let eventSetup = null;
+    let charData = [];
+    let selectedChar = null;
+    let selectedDir = null;
+
+    // Kick things off
+    renderCharacterInputs();
+
+    function renderCharacterInputs() {
+      const count = parseInt(document.getElementById('charCount').value, 10);
+      charData = Array(count + 1).fill(null);
+      selectedChar = null;
+      const container = document.getElementById('characterInputs');
+      container.innerHTML = '';
+      for (let i = 1; i <= count; i++) {
+        const div = document.createElement('div');
+        div.className = 'input-group';
+        div.innerHTML = `
+          <label>Character ${i} Name:</label>
+          <input type="text" id="char${i}" placeholder="Enter name for character ${i}">
+          <label>Start Y, X:</label>
+          <input type="number" id="startY${i}" placeholder="Y">
+          <input type="number" id="startX${i}" placeholder="X">
+          <label>Facing Direction:</label>
+          <select id="facing${i}">
+            <option value="0">Up (0)</option>
+            <option value="1">Right (1)</option>
+            <option value="2">Down (2)</option>
+            <option value="3">Left (3)</option>
+          </select>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function saveEvent() {
+      const loc = document.getElementById('location').value;
+      const evNum = document.getElementById('eventNumber').value.trim();
+      const music = document.getElementById('music').value;
+      if (!evNum || evNum.length < 6) {
+        alert('Please enter an event number at least 6 digits long.');
+        return;
+      }
+      eventSetup = { loc, evNum, music };
+      writeText(`"Action": "EditData",`);
+      writeText(`"Target": "Data/Events/${loc}",`);
+      writeText(`"Entries": {`);
+      writeText(`"${evNum}/": "${music}/-1000 -1000/skippable/`);
+    }
+
+    function saveNames() {
+          if (!eventSetup)        { alert('Save event first');         return; }
+      const count = charData.length - 1;
+      const segments = [];
+      for (let i = 1; i <= count; i++) {
+        const name = document.getElementById('char' + i).value.trim() || null;
+        const y    = parseInt(document.getElementById('startY' + i).value, 10) || 0;
+        const x    = parseInt(document.getElementById('startX' + i).value, 10) || 0;
+        const f    = parseInt(document.getElementById('facing' + i).value, 10);
+        if (name) {
+          charData[i] = { name, y, x, facing: f };
+          segments.push(`${name} ${y} ${x} ${f}`);
+        } else {
+          charData[i] = null;
+        }
+      }
+      if (segments.length > 0) writeText(segments.join(' ')+ '/');
+      renderCharButtons();
+    }
+
+    function renderCharButtons() {
+      const container = document.getElementById('charButtons');
+      container.innerHTML = '';
+      for (let i = 1; i < charData.length; i++) {
+        const btn = document.createElement('button');
+        btn.innerText = charData[i]?.name || `Unnamed${i}`;
+        btn.onclick = () => {
+          selectedChar = i;
+          document
+            .querySelectorAll('#charButtons button')
+            .forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        };
+        container.appendChild(btn);
+      }
+    }
+
+    function showMoveControls() {
+      if (!selectedChar) { alert('Select a character first'); return; }
+      document.getElementById('moveControls').style.display = 'block';
+      selectedDir = null;
+      document
+        .querySelectorAll('#moveControls button')
+        .forEach(b => b.classList.remove('selected'));
+    }
+
+    function selectMoveDir(dir, btn) {
+      selectedDir = dir;
+      document
+        .querySelectorAll('#moveControls button')
+        .forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    function addMove() {
+      if (!eventSetup) { alert('Save event first'); return; }
+      if (!selectedDir)  { alert('Select move direction'); return; }
+      const cnt = parseInt(document.getElementById('moveCount').value, 10) || 1;
+      let dx = 0, dy = 0;
+      if (selectedDir === 'up')    dy = -cnt;
+      if (selectedDir === 'down')  dy = cnt;
+      if (selectedDir === 'left')  dx = -cnt;
+      if (selectedDir === 'right') dx = cnt;
+      const endF = document.getElementById('endFacing').value;
+      const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
+      writeText(`move ${name} ${dx} ${dy} ${endF}/`);
+      document.getElementById('moveControls').style.display = 'none';
+    }
+
+    function eventSpeak() {
+      if (!eventSetup)        { alert('Save event first');         return; }
+      if (!selectedChar)      { alert('Select a character first'); return; }
+      const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
+      const line = prompt(`Enter dialogue for ${name}:`, '...');
+      if (line !== null) writeText(`speak ${name} \\\" ${line} \\\"/`);
+    }
+
+    function clearOutput() {
+      document.getElementById('output').innerHTML = '';
+    }
+
     function writeText(text) {
-      document.getElementById('output').innerText = text;
+      const span = document.createElement('span');
+      span.innerText = text + ' ';
+      document.getElementById('output').appendChild(span);
     }
   </script>
 </body>
