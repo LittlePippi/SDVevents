@@ -35,6 +35,7 @@
       width: 100%;
       padding: 0.5rem;
       font-size: 1rem;
+      color: #8d421a;
       margin-bottom: 0.5rem;
     }
 
@@ -49,32 +50,47 @@
       font-size: 1rem;
       background: #f0cf99;
       border: 1px solid #673d0e;
+      color: #8d421a;
     }
 
     #charButtons,
     #actionButtons,
     #moveControls,
-    #faceControls #emoteControls {
+    #faceControls 
+    #emoteControls
+    #speakControls
+    #textboxControls
+   {
       margin-top: 1rem;
     }
 
     #charButtons button.selected,
     #moveControls button.selected,
-    #faceControls button.selected #emoteControls button.selected {
+    #faceControls button.selected, 
+    #emoteControls button.selected,
+    #speakControls button.selected,
+    #textboxControls button.selected
+    
+     {
       outline: 2px solid #805411;
     }
 
     #output {
+    width: 100%;
       margin-top: 1.5rem;
       padding: 1rem;
       background: #f0cf99;
       border: 1px solid #673d0e;
       min-height: 200px;
       max-height: 400px;
-      overflow-x: auto;
-      overflow-y: auto;
-      white-space: nowrap;
+  overflow-y: auto;      /* Enable vertical scroll */
+  overflow-x: hidden;    /* Hide horizontal scroll */
+  white-space: normal;   /* Allow wrapping */
       font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9rem;
+      color: #8d421a;
+      resize: vertical;
+      box-sizing: border-box;
     }
 
     a {
@@ -231,7 +247,10 @@
       <button onclick="eventSpeak()">Speak</button>
       <button onclick="showFaceControls()">FaceDirection</button>
       <button onclick="showEmoteControls()">Emote</button>
+      <button onclick="eventJump()">Jump</button>
+      <button onclick="showTextboxControls()">Textbox</button>
       <button onclick="clearOutput()">Clear Output</button>
+      
     </div>
   </div>
 
@@ -285,9 +304,25 @@
     <button onclick="addEmote()">Add Emote</button>
   </div>
 
+  <!-- Speak Controls -->
+  <div id="speakControls" style="display: none;">
+    <label>Dialogue Line:</label>
+    <input type="text" id="speakLine" placeholder="Enter dialogue...">
+    <button onclick="addSpeak()">Add Dialogue</button>
+  </div>
+
+<!-- Text message Controls -->
+<div id="textboxControls" style="display: none;">
+  <label>Dialogue Line:</label>
+  <input type="text" id="textboxLine" placeholder="Enter text dialogue...">
+  <button onclick="addTextbox()">Add Text Box</button>
+</div>
+
+
 
   <!-- Output -->
-  <div id="output"></div>
+<textarea id="output" rows="10"></textarea>
+
 
   <script>
     let eventSetup = null;
@@ -340,7 +375,7 @@
       }
 
       // Base entry
-      writeText(`": "${music}/-1000 -1000/skippable/`);
+      writeText(`": "${music}/-1000 -1000/`);
 
       // Hide Event set-up and show Character set-up
       document.getElementById('eventSetup').style.display = 'none';
@@ -375,6 +410,7 @@
 
       // Hide character setup
       document.getElementById('characterSetup').style.display = 'none';
+      writeText(`skippable/`);
 
     }
 
@@ -470,13 +506,44 @@
     }
 
 
+    function addSpeak() {
+      if (!selectedChar) { alert('Select a character first'); return; }
+      const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
+      const line = document.getElementById('speakLine').value.trim();
+      if (line) {
+        writeText(`speak ${name} \\\"${line}\\\"/`);
+      }
+      document.getElementById('speakControls').style.display = 'none';
+    }
     function eventSpeak() {
       if (!eventSetup) { alert('Save event first'); return; }
       if (!selectedChar) { alert('Select a character first'); return; }
-      const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
-      const line = prompt(`Enter dialogue for ${name}:`, '...');
-      if (line !== null) writeText(`speak ${name} \\\" ${line} \\\"/`);
+
+      // Just show the speak controls (don't hide anything else)
+      document.getElementById('speakControls').style.display = 'block';
+      document.getElementById('speakLine').value = ''; // optional: clear previous input
     }
+
+    function addTextbox() {
+  const line = document.getElementById('textboxLine').value.trim();
+  if (line) {
+    writeText(`message \\\"${line}\\\"/`);
+  }
+  document.getElementById('textboxControls').style.display = 'none';
+}
+
+function showTextboxControls() {
+  document.getElementById('moveControls').style.display = 'none';
+  document.getElementById('faceControls').style.display = 'none';
+  document.getElementById('emoteControls').style.display = 'none';
+  document.getElementById('speakControls').style.display = 'none';
+  document.getElementById('textboxControls').style.display = 'block';
+
+  document.getElementById('textboxLine').value = '';
+  document.getElementById('textboxLine').focus();
+}
+
+
 
     function showEmoteControls() {
       if (!selectedChar) { alert('Select a character first'); return; }
@@ -493,16 +560,24 @@
       document.getElementById('emoteControls').style.display = 'none';
     }
 
+    function eventJump() {
+      if (!selectedChar) {
+        alert("Select a character first");
+        return;
+      }    
+      const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
+      writeText(`jump ${name}/`);
+    }
 
     function clearOutput() {
       document.getElementById('output').innerHTML = '';
     }
 
-    function writeText(text) {
-      const s = document.createElement('span');
-      s.innerText = text + '';
-      document.getElementById('output').appendChild(s);
-    }
+function writeText(text) {
+  const outputBox = document.getElementById('output');
+  outputBox.value += text + '';
+}
+
   </script>
 </body>
 
