@@ -2,7 +2,6 @@
 Made by LittlePippi.  
 
 You can find my mods here: https://next.nexusmods.com/profile/LittlePippi.  
-
 I'm currently working on other Attack on Titan NPCs.  
 
 
