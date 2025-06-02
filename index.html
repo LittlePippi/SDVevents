@@ -48,7 +48,6 @@
       outline: 2px solid #673d0e;
     }
 
-
     button,
     input[type="text"],
     input[type="number"],
@@ -72,7 +71,6 @@
     #textboxControls {
       margin-top: 1rem;
     }
-
 
     #charButtons button.selected,
     #moveControls button.selected,
@@ -215,18 +213,16 @@
         <option value="WizardHouseBasement">Wizard Tower's Basement</option>
         <option value="Woods">Secret Woods. Careful with this one!</option>
       </select>
-
-
       <label for="eventId">Event ID (use a unique string):</label>
-      <input type="text" id="eventId" placeholder="ex. {{ModId}}_EventId">
+      <input type="text" id="eventId" placeholder="{{ModId}}_EventId">
 
 
-<label for="music">Music:</label>
-<span style="color: #9b835c; font-style: italic;">
-  Sheet with music:
-  <a href="https://docs.google.com/spreadsheets/d/1CpDrw23peQiq-C7F2FjYOMePaYe0Rc9BwQsj3h6sjyo/edit?gid=1007418291#gid=1007418291" target="_blank">Here</a>.
-</span>
-
+      <label for="music">Music:</label>
+      <span style="color: #9b835c; font-style: italic;">
+        Sheet with music:
+        <a href="https://docs.google.com/spreadsheets/d/1CpDrw23peQiq-C7F2FjYOMePaYe0Rc9BwQsj3h6sjyo/edit?gid=1007418291#gid=1007418291"
+          target="_blank">Here</a>.
+      </span>
       <select id="music">
         <option>none</option>
         <option>default</option>
@@ -350,7 +346,6 @@
         <option value="Placeholder">Placeholder</option>
       </select>
 
-
       <label for="weatherCondition">Weather Condition (optional):</label>
       <select id="weatherCondition">
         <option value="">None</option>
@@ -368,8 +363,8 @@
       </select>
 
       <label>Friendship Condition (optional):</label>
-      <input type="text" id="friendName" placeholder="NPC Name (ex Levi)">
-      <input type="number" id="friendHearts" placeholder="Hearts (ex 2)" min="0">
+      <input type="text" id="friendName" placeholder="NPC Name (ex. Pippi)">
+      <input type="number" id="friendHearts" placeholder="Hearts (ex. 2)" min="0">
     </div>
     <button onclick="saveEvent()">Save Event &amp; Conditions</button>
   </div>
@@ -386,12 +381,14 @@
     <button onclick="saveNames()">Add to Event</button>
   </div>
 
+
   <!-- Character Actions -->
   <div id="interactionSetup" style="display: none;">
     <h2>Select Character</h2>
     <div id="charButtons"></div>
 
-    <!-- Actions / Move Controls -->
+
+  <!-- Actions / Move Controls -->
     <h2>Actions</h2>
     <div id="actionButtons">
       <button onclick="showMoveControls()">Move</button>
@@ -412,9 +409,9 @@
     <input type="number" id="moveCount" value="1" min="1" style="width:4rem;">
     <div>
       <button data-dir onclick="selectMoveDir('up', this)">Up</button>
-      <button data-dir onclick="selectMoveDir('left', this)">Left</button>
-      <button data-dir onclick="selectMoveDir('down', this)">Down</button>
       <button data-dir onclick="selectMoveDir('right', this)">Right</button>
+      <button data-dir onclick="selectMoveDir('down', this)">Down</button>
+      <button data-dir onclick="selectMoveDir('left', this)">Left</button>
 
     </div>
     <div>
@@ -479,7 +476,6 @@
     <button onclick="addPause()">Pause</button>
   </div>
 
-
   <!-- Output -->
   <textarea id="output" rows="10"></textarea>
 
@@ -511,16 +507,11 @@
       const friendName = document.getElementById('friendName').value.trim();
       const heartsInput = parseInt(document.getElementById('friendHearts').value, 10) || 0;
 
-      // Store for later
       eventSetup = { loc, evId, music };
 
-
-      // Begin JSON header
       writeText(`"Action": "EditData",`);
       writeText(`"Target": "Data/Events/${loc}",`);
       writeText(`"Entries": {`);
-
-      // Base entry
       writeText(`"${evId}`);
 
       // Optional friendship
@@ -571,6 +562,7 @@
 
       writeText(`skippable/`);
 
+      // Viewport
       const vpY = parseInt(document.getElementById('viewportX1').value, 10);
       const vpX = parseInt(document.getElementById('viewportY1').value, 10);
 
@@ -579,11 +571,7 @@
       }
       // Hide character setup
       document.getElementById('characterSetup').style.display = 'none';
-
-
     }
-
-
 
     function renderCharacterInputs() {
       const count = parseInt(document.getElementById('charCount').value, 10);
@@ -615,7 +603,6 @@
       }
     }
 
-
     function renderCharButtons() {
       const c = document.getElementById('charButtons');
       c.innerHTML = '';
@@ -631,8 +618,6 @@
         c.appendChild(btn);
       }
     }
-
-
 
     function addMove() {
       if (!eventSetup) { alert('Save event first'); return; }
@@ -669,14 +654,13 @@
       }
     }
 
+    // Selection the direction button
     function selectMoveDir(dir, btn) {
       selectedDir = dir;
       document.querySelectorAll('#moveControls button[data-dir]')
         .forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
     }
-
-
 
     function showFaceControls() {
       if (!selectedChar) { alert('Select a character first'); return; }
@@ -696,6 +680,7 @@
       document.getElementById('faceControls').style.display = 'none';
     }
 
+    // Reads input
     function addSpeak() {
       if (!selectedChar) { alert('Select a character first'); return; }
       const name = charData[selectedChar]?.name || `Unnamed${selectedChar}`;
@@ -705,6 +690,8 @@
       }
       document.getElementById('speakControls').style.display = 'none';
     }
+
+    // Write output
     function eventSpeak() {
       if (!eventSetup) { alert('Save event first'); return; }
       if (!selectedChar) { alert('Select a character first'); return; }
@@ -719,8 +706,6 @@
       }
     }
 
-
-
     function showPauseControls() {
       const panel = document.getElementById('pauseControls');
       const isVisible = panel.style.display === 'block';
@@ -731,8 +716,6 @@
         document.getElementById('pauseMs').focus();
       }
     }
-
-
 
     function addTextbox() {
       const line = document.getElementById('textboxLine').value.trim();
@@ -753,9 +736,6 @@
       }
     }
 
-
-
-
     function showEmoteControls() {
       if (!selectedChar) { alert('Select a character first'); return; }
       const panel = document.getElementById('emoteControls');
@@ -765,7 +745,6 @@
         panel.style.display = 'block';
       }
     }
-
 
     function addEmote() {
       if (!selectedChar) { alert('Select a character first'); return; }
@@ -788,7 +767,6 @@
       document.getElementById('output').value = '';
     }
 
-
     function writeText(text) {
       const outputBox = document.getElementById('output');
       outputBox.value += text + '';
@@ -798,8 +776,6 @@
       writeText(`globalFade/viewport -1000 -1000/end`);
     }
 
-
   </script>
 </body>
-
 </html>
